@@ -1,0 +1,10 @@
+{
+  "tiers": {
+    "S": { "label": "S", "colorHex": "FF5555" },
+    "A": { "label": "A", "colorHex": "FFAA00" },
+    "B": { "label": "B", "colorHex": "FFFF55" },
+    "C": { "label": "C", "colorHex": "55FF55" },
+    "D": { "label": "D", "colorHex": "AAAAAA" }
+  },
+  "players": {}
+}
