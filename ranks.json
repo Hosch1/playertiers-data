@@ -1,16 +1,16 @@
 {
   "tiers": {
-    "A": {
-      "label": "A",
-      "colorHex": "C0C0C0"
+    "S": {
+      "label": "S",
+      "colorHex": "FFD700"
     },
     "B": {
       "label": "B",
       "colorHex": "CD7F32"
     },
-    "S": {
-      "label": "S",
-      "colorHex": "FFD700"
+    "A": {
+      "label": "A",
+      "colorHex": "C0C0C0"
     },
     "C": {
       "label": "C",
