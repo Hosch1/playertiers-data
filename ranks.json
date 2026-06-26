@@ -2,23 +2,23 @@
   "tiers": {
     "A": {
       "label": "A",
-      "colorHex": "FFAA00"
+      "colorHex": "C0C0C0"
     },
     "B": {
       "label": "B",
-      "colorHex": "FFFF55"
+      "colorHex": "CD7F32"
     },
     "S": {
       "label": "S",
-      "colorHex": "FF5555"
+      "colorHex": "FFD700"
     },
     "C": {
       "label": "C",
-      "colorHex": "55FF55"
+      "colorHex": "8B0000"
     },
     "D": {
       "label": "D",
-      "colorHex": "AAAAAA"
+      "colorHex": "3B3B3B"
     }
   },
   "players": {
