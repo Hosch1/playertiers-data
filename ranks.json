@@ -1,16 +1,16 @@
 {
   "tiers": {
-    "S": {
-      "label": "S",
-      "colorHex": "FFD700"
+    "A": {
+      "label": "A",
+      "colorHex": "C0C0C0"
     },
     "B": {
       "label": "B",
       "colorHex": "CD7F32"
     },
-    "A": {
-      "label": "A",
-      "colorHex": "C0C0C0"
+    "S": {
+      "label": "S",
+      "colorHex": "FFD700"
     },
     "C": {
       "label": "C",
@@ -22,6 +22,6 @@
     }
   },
   "players": {
-    "_hoschi": "A"
+    "_hoschi": "S"
   }
 }
