@@ -22,7 +22,7 @@
     }
   },
   "players": {
-    "_hoschi": "A",
-    "_player521": "S"
+    "player123": "A",
+    "_hoschi": "A"
   }
 }
