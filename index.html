@@ -24,7 +24,8 @@
     --silver-dark: #6f6f6f;
     --bronze: #cd7f32;
     --bronze-dark: #6e431a;
-    --darkred: #8b0000;
+    --darkred: #4a0512;
+    --darkred-light: #7a0e24;
     --uglygray: #3b3b3b;
   }
 
@@ -123,38 +124,44 @@
   .medallion {
     position: relative;
     flex-shrink: 0;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    border-radius: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Pixelify Sans', sans-serif;
     font-weight: 700;
     font-size: 26px;
-    color: rgba(0,0,0,0.55);
-    box-shadow: inset 0 2px 4px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.45);
+    box-shadow:
+      inset 3px 3px 0 rgba(255,255,255,0.32),
+      inset -3px -3px 0 rgba(0,0,0,0.4),
+      2px 3px 0 rgba(0,0,0,0.55);
+    image-rendering: pixelated;
     overflow: hidden;
   }
 
-  .medallion.metal::after {
+  .medallion::before {
     content: '';
     position: absolute;
-    top: -120%;
-    left: -60%;
-    width: 40%;
-    height: 340%;
-    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.55), transparent);
-    transform: rotate(20deg);
-    transition: left 0.6s ease;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.3) 22%, transparent 22%, transparent 78%, rgba(0,0,0,0.28) 78%, rgba(0,0,0,0.28) 100%);
   }
-  .tier-row:hover .medallion.metal::after { left: 130%; }
 
-  .m-s { background: radial-gradient(circle at 35% 30%, #fff7d6, var(--gold) 55%, var(--gold-dark)); }
-  .m-a { background: radial-gradient(circle at 35% 30%, #f5f5f5, var(--silver) 55%, var(--silver-dark)); }
-  .m-b { background: radial-gradient(circle at 35% 30%, #e8b27e, var(--bronze) 55%, var(--bronze-dark)); }
-  .m-c { background: var(--darkred); color: #e9c9c9; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.5); }
-  .m-d { background: var(--uglygray); color: #8d8d8d; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.5); }
+  .tier-row:hover .medallion::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.16);
+  }
+
+  .m-s { background: var(--gold); color: #4a3a00; }
+  .m-a { background: var(--silver); color: #3a3a3a; }
+  .m-b { background: var(--bronze); color: #3a210a; }
+  .m-c { background: var(--darkred); color: #f0b8c2; }
+  .m-d { background: var(--uglygray); color: #9a9a9a; }
 
   .tier-body { flex: 1; min-width: 0; }
 
@@ -265,13 +272,13 @@
     return TIER_ORDER_CLASS[tierId.toUpperCase()] ? TIER_ORDER_CLASS[tierId.toUpperCase()] : '';
   }
 
-  function isMetal(tierId) {
-    return ['S', 'A', 'B'].includes(tierId.toUpperCase());
-  }
-
   function render(data) {
     const content = document.getElementById('content');
-    const tierIds = Object.keys(data.tiers || {});
+    const allIds = Object.keys(data.tiers || {});
+    const FIXED_ORDER = ['S', 'A', 'B', 'C', 'D'];
+    const known = FIXED_ORDER.filter(id => allIds.includes(id));
+    const extra = allIds.filter(id => !FIXED_ORDER.includes(id));
+    const tierIds = known.concat(extra);
 
     if (tierIds.length === 0) {
       content.innerHTML = '<div class="state-msg">Noch keine Tiers definiert.</div>';
@@ -293,10 +300,9 @@
       }
 
       const mClass = medallionClass(tierId);
-      const metalClass = isMetal(tierId) ? 'metal' : '';
 
       html += `<div class="tier-row">`;
-      html += `<div class="medallion ${mClass} ${metalClass}">${def.label || tierId}</div>`;
+      html += `<div class="medallion ${mClass}">${def.label || tierId}</div>`;
       html += `<div class="tier-body">`;
       html += `<div class="tier-label">${players.length} Spieler</div>`;
       if (players.length === 0) {
