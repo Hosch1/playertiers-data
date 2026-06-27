@@ -18,7 +18,7 @@
     --orange-soft: #ffb37a;
     --cyan: #2fd8c9;
     --cyan-dark: #12685f;
-    --gold: #ffd700;
+    --gold: #d4af37;
     --gold-dark: #8a6d00;
     --silver: #c9c9c9;
     --silver-dark: #6f6f6f;
@@ -68,12 +68,38 @@
     font-weight: 700;
     letter-spacing: 0.01em;
     text-transform: uppercase;
-    font-size: clamp(26px, 4.8vw, 38px);
+    font-size: clamp(34px, 7vw, 56px);
     margin: 0;
     background: linear-gradient(100deg, var(--orange) 0%, var(--orange-soft) 32%, #eafffa 48%, #8ff0e4 58%, var(--cyan) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .discord-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 6px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .discord-btn:hover {
+    border-color: var(--cyan-dark);
+    color: var(--cyan);
   }
 
   .meta {
@@ -157,7 +183,11 @@
     background: rgba(255,255,255,0.16);
   }
 
-  .m-s { background: var(--gold); color: #4a3a00; }
+  .m-s { background: var(--gold); color: #3a2c00; }
+  .m-s::before {
+    background:
+      linear-gradient(135deg, rgba(255,244,200,0.55) 0%, rgba(255,244,200,0.55) 22%, transparent 22%, transparent 78%, rgba(60,40,0,0.35) 78%, rgba(60,40,0,0.35) 100%);
+  }
   .m-a { background: var(--silver); color: #3a3a3a; }
   .m-b { background: var(--bronze); color: #3a210a; }
   .m-c { background: var(--darkred); color: #f0b8c2; }
@@ -232,6 +262,94 @@
     opacity: 0.7;
   }
 
+  .player {
+    cursor: pointer;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8,10,11,0.78);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 100;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    position: relative;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.4), 0 16px 40px rgba(0,0,0,0.5);
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .modal-close:hover { color: var(--cyan); }
+
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+
+  .modal-skin {
+    width: 140px;
+    height: 280px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    background: var(--bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  .modal-medallion {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Pixelify Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.45);
+    box-shadow:
+      inset 2px 2px 0 rgba(255,255,255,0.32),
+      inset -2px -2px 0 rgba(0,0,0,0.4);
+    margin: 0 auto;
+  }
+
+  .modal-info h2 {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 22px;
+    margin: 10px 0 4px;
+  }
+
+  .modal-tier-name {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
   @media (max-width: 540px) {
     .tier-row { gap: 16px; }
     .medallion { width: 48px; height: 48px; font-size: 18px; }
@@ -242,7 +360,19 @@
   <div class="wrap">
     <header>
       <h1>SMPerry-Tierlist</h1>
-      <div class="meta"><span class="dot" id="statusDot"></span><span id="statusText">lädt …</span></div>
+      <div class="header-right">
+        <div class="meta"><span class="dot" id="statusDot"></span><span id="statusText">lädt …</span></div>
+        <a class="discord-btn" href="https://discord.gg/5Ngc6vsQPB" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 5.5C4 4.67 4.67 4 5.5 4h13c.83 0 1.5.67 1.5 1.5v13c0 .83-.67 1.5-1.5 1.5h-13C4.67 20 4 19.33 4 18.5v-13Z" stroke="currentColor" stroke-width="1.4" opacity="0"/>
+            <circle cx="9" cy="13" r="1.6" fill="currentColor"/>
+            <circle cx="15" cy="13" r="1.6" fill="currentColor"/>
+            <path d="M8 8.5c2.7-1 5.3-1 8 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M6 16.5c.6-2.6 1-5.8 1-8 0 0 1.2-1 5-1s5 1 5 1c0 2.2.4 5.4 1 8-1.8 1.2-3.2 1.7-3.2 1.7l-.8-1.4M6 16.5c1.8 1.2 3.2 1.7 3.2 1.7l.8-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          Discord
+        </a>
+      </div>
     </header>
 
     <div class="search">
@@ -256,6 +386,20 @@
     <footer>Skins via mc-heads.net / minotar.net &middot; aktualisiert sich automatisch alle 45&nbsp;Sekunden</footer>
   </div>
 
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose" aria-label="Schließen">&times;</button>
+      <div class="modal-body">
+        <img id="modalSkin" class="modal-skin" alt="">
+        <div class="modal-info">
+          <div class="modal-medallion" id="modalMedallion"></div>
+          <h2 id="modalName"></h2>
+          <div class="modal-tier-name" id="modalTierName"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
   const TIER_ORDER_CLASS = { S: 'm-s', A: 'm-a', B: 'm-b', C: 'm-c', D: 'm-d' };
   const REFRESH_MS = 45000;
@@ -266,6 +410,12 @@
     return fallback
       ? `https://minotar.net/avatar/${encodeURIComponent(username)}/40`
       : `https://mc-heads.net/avatar/${encodeURIComponent(username)}/40`;
+  }
+
+  function bodyUrl(username, fallback) {
+    return fallback
+      ? `https://minotar.net/armor/body/${encodeURIComponent(username)}/200`
+      : `https://mc-heads.net/body/${encodeURIComponent(username)}/200`;
   }
 
   function medallionClass(tierId) {
@@ -311,7 +461,7 @@
         html += `<div class="players">`;
         players.forEach(name => {
           const safeName = name.replace(/"/g, '&quot;');
-          html += `<div class="player">
+          html += `<div class="player" data-name="${safeName}" data-tier="${tierId}">
             <img src="${avatarUrl(name, false)}" alt="${safeName}"
                  onerror="this.onerror=null;this.src='${avatarUrl(name, true)}';">
             <span>${name}</span>
@@ -350,6 +500,43 @@
   document.getElementById('searchInput').addEventListener('input', (e) => {
     filterText = e.target.value.trim().toLowerCase();
     if (lastData) render(lastData);
+  });
+
+  function openModal(name, tierId) {
+    if (!lastData || !lastData.tiers[tierId]) return;
+    const def = lastData.tiers[tierId];
+    const mClass = medallionClass(tierId);
+
+    document.getElementById('modalName').textContent = name;
+    document.getElementById('modalTierName').textContent = 'Tier ' + (def.label || tierId);
+
+    const medallion = document.getElementById('modalMedallion');
+    medallion.className = 'modal-medallion ' + mClass;
+    medallion.textContent = def.label || tierId;
+
+    const skin = document.getElementById('modalSkin');
+    skin.alt = name;
+    skin.src = bodyUrl(name, false);
+    skin.onerror = () => { skin.onerror = null; skin.src = bodyUrl(name, true); };
+
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  document.getElementById('content').addEventListener('click', (e) => {
+    const card = e.target.closest('.player');
+    if (card) openModal(card.dataset.name, card.dataset.tier);
+  });
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
   });
 
   loadData();
