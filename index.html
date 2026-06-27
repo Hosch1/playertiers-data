@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rangliste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1714;
+    --bg-grain: #1e1a16;
+    --panel: #221e18;
+    --panel-border: #3a3228;
+    --text: #ede6d6;
+    --text-muted: #9c9284;
+    --gold: #ffd700;
+    --gold-dark: #8a6d00;
+    --silver: #c9c9c9;
+    --silver-dark: #6f6f6f;
+    --bronze: #cd7f32;
+    --bronze-dark: #6e431a;
+    --darkred: #8b0000;
+    --uglygray: #3b3b3b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,0.03), transparent 40%),
+      radial-gradient(circle at 80% 100%, rgba(255,255,255,0.025), transparent 45%);
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: clamp(28px, 5vw, 40px);
+    margin: 0;
+    background: linear-gradient(135deg, #fff3b0, var(--gold) 45%, #8a6d00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6fbf73;
+    box-shadow: 0 0 6px #6fbf73;
+    flex-shrink: 0;
+  }
+  .dot.error { background: #c0524a; box-shadow: 0 0 6px #c0524a; }
+
+  .search {
+    margin-bottom: 36px;
+  }
+  .search input {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .search input::placeholder { color: var(--text-muted); }
+  .search input:focus { border-color: var(--gold-dark); }
+
+  .tier-row {
+    display: flex;
+    gap: 28px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--panel-border);
+    align-items: flex-start;
+  }
+  .tier-row:last-child { border-bottom: none; }
+
+  .medallion {
+    position: relative;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: rgba(0,0,0,0.55);
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  .medallion.metal::after {
+    content: '';
+    position: absolute;
+    top: -120%;
+    left: -60%;
+    width: 40%;
+    height: 340%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.55), transparent);
+    transform: rotate(20deg);
+    transition: left 0.6s ease;
+  }
+  .tier-row:hover .medallion.metal::after { left: 130%; }
+
+  .m-s { background: radial-gradient(circle at 35% 30%, #fff7d6, var(--gold) 55%, var(--gold-dark)); }
+  .m-a { background: radial-gradient(circle at 35% 30%, #f5f5f5, var(--silver) 55%, var(--silver-dark)); }
+  .m-b { background: radial-gradient(circle at 35% 30%, #e8b27e, var(--bronze) 55%, var(--bronze-dark)); }
+  .m-c { background: var(--darkred); color: #e9c9c9; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.5); }
+  .m-d { background: var(--uglygray); color: #8d8d8d; box-shadow: inset 0 0 0 2px rgba(0,0,0,0.3), 0 2px 6px rgba(0,0,0,0.5); }
+
+  .tier-body { flex: 1; min-width: 0; }
+
+  .tier-label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .players {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 7px 12px 7px 7px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .player:hover {
+    border-color: var(--gold-dark);
+    transform: translateY(-1px);
+  }
+
+  .player img {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    image-rendering: pixelated;
+    display: block;
+    background: #000;
+  }
+
+  .player span {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .empty-tier {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .state-msg {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 60px 0;
+    font-size: 14px;
+  }
+
+  footer {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 540px) {
+    .tier-row { gap: 16px; }
+    .medallion { width: 48px; height: 48px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Rangliste</h1>
+      <div class="meta"><span class="dot" id="statusDot"></span><span id="statusText">lädt …</span></div>
+    </header>
+
+    <div class="search">
+      <input type="text" id="searchInput" placeholder="Spieler suchen …">
+    </div>
+
+    <main id="content">
+      <div class="state-msg">Lade Rangliste …</div>
+    </main>
+
+    <footer>Skins via mc-heads.net / minotar.net &middot; aktualisiert sich automatisch alle 45&nbsp;Sekunden</footer>
+  </div>
+
+<script>
+  const TIER_ORDER_CLASS = { S: 'm-s', A: 'm-a', B: 'm-b', C: 'm-c', D: 'm-d' };
+  const REFRESH_MS = 45000;
+  let lastData = null;
+  let filterText = '';
+
+  function avatarUrl(username, fallback) {
+    return fallback
+      ? `https://minotar.net/avatar/${encodeURIComponent(username)}/40`
+      : `https://mc-heads.net/avatar/${encodeURIComponent(username)}/40`;
+  }
+
+  function medallionClass(tierId) {
+    return TIER_ORDER_CLASS[tierId.toUpperCase()] ? TIER_ORDER_CLASS[tierId.toUpperCase()] : '';
+  }
+
+  function isMetal(tierId) {
+    return ['S', 'A', 'B'].includes(tierId.toUpperCase());
+  }
+
+  function render(data) {
+    const content = document.getElementById('content');
+    const tierIds = Object.keys(data.tiers || {});
+
+    if (tierIds.length === 0) {
+      content.innerHTML = '<div class="state-msg">Noch keine Tiers definiert.</div>';
+      return;
+    }
+
+    const grouped = {};
+    tierIds.forEach(id => grouped[id] = []);
+    Object.entries(data.players || {}).forEach(([name, tierId]) => {
+      if (grouped[tierId]) grouped[tierId].push(name);
+    });
+
+    let html = '';
+    tierIds.forEach(tierId => {
+      const def = data.tiers[tierId];
+      let players = grouped[tierId].sort((a, b) => a.localeCompare(b));
+      if (filterText) {
+        players = players.filter(p => p.toLowerCase().includes(filterText));
+      }
+
+      const mClass = medallionClass(tierId);
+      const metalClass = isMetal(tierId) ? 'metal' : '';
+
+      html += `<div class="tier-row">`;
+      html += `<div class="medallion ${mClass} ${metalClass}">${def.label || tierId}</div>`;
+      html += `<div class="tier-body">`;
+      html += `<div class="tier-label">${players.length} Spieler</div>`;
+      if (players.length === 0) {
+        html += `<div class="empty-tier">${filterText ? 'Kein Treffer in diesem Tier.' : 'Noch niemand hier.'}</div>`;
+      } else {
+        html += `<div class="players">`;
+        players.forEach(name => {
+          const safeName = name.replace(/"/g, '&quot;');
+          html += `<div class="player">
+            <img src="${avatarUrl(name, false)}" alt="${safeName}"
+                 onerror="this.onerror=null;this.src='${avatarUrl(name, true)}';">
+            <span>${name}</span>
+          </div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div></div>`;
+    });
+
+    content.innerHTML = html;
+  }
+
+  async function loadData() {
+    const dot = document.getElementById('statusDot');
+    const text = document.getElementById('statusText');
+    try {
+      const res = await fetch('ranks.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      lastData = data;
+      render(data);
+      dot.classList.remove('error');
+      const now = new Date();
+      text.textContent = 'aktualisiert ' + now.toLocaleTimeString('de-DE');
+    } catch (e) {
+      dot.classList.add('error');
+      text.textContent = 'Fehler beim Laden – nächster Versuch in Kürze';
+      if (!lastData) {
+        document.getElementById('content').innerHTML =
+          '<div class="state-msg">Konnte die Rangliste nicht laden. Liegt ranks.json im selben Ordner?</div>';
+      }
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    filterText = e.target.value.trim().toLowerCase();
+    if (lastData) render(lastData);
+  });
+
+  loadData();
+  setInterval(loadData, REFRESH_MS);
+</script>
+</body>
+</html>
