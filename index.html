@@ -18,7 +18,7 @@
     --orange-soft: #ffb37a;
     --cyan: #2fd8c9;
     --cyan-dark: #12685f;
-    --gold: #d4af37;
+    --gold: #ffc72c;
     --gold-dark: #8a6d00;
     --silver: #c9c9c9;
     --silver-dark: #6f6f6f;
@@ -95,11 +95,13 @@
     font-weight: 600;
     padding: 7px 14px;
     border-radius: 6px;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   }
   .discord-btn:hover {
     border-color: var(--cyan-dark);
     color: var(--cyan);
+    transform: scale(1.06);
+    box-shadow: 0 0 14px rgba(47,216,201,0.3);
   }
 
   .meta {
@@ -166,6 +168,11 @@
       2px 3px 0 rgba(0,0,0,0.55);
     image-rendering: pixelated;
     overflow: hidden;
+    transition: transform 0.15s ease;
+  }
+
+  .tier-row:hover .medallion {
+    transform: scale(1.14) rotate(-2deg);
   }
 
   .medallion::before {
@@ -176,18 +183,29 @@
       linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.3) 22%, transparent 22%, transparent 78%, rgba(0,0,0,0.28) 78%, rgba(0,0,0,0.28) 100%);
   }
 
-  .tier-row:hover .medallion::after {
+  .medallion::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0.16);
+    top: -150%;
+    left: -70%;
+    width: 35%;
+    height: 400%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.7), transparent);
+    transform: rotate(20deg);
+    transition: left 0.45s ease;
   }
+  .tier-row:hover .medallion::after { left: 140%; }
 
-  .m-s { background: var(--gold); color: #3a2c00; }
-  .m-s::before {
-    background:
-      linear-gradient(135deg, rgba(255,244,200,0.55) 0%, rgba(255,244,200,0.55) 22%, transparent 22%, transparent 78%, rgba(60,40,0,0.35) 78%, rgba(60,40,0,0.35) 100%);
+  .m-s {
+    background: linear-gradient(135deg,
+      #fff6c2 0%, #fff6c2 12%,
+      #ffe066 12%, #ffe066 32%,
+      #f2c230 32%, #f2c230 64%,
+      #c9911a 64%, #c9911a 84%,
+      #8a5a10 84%, #8a5a10 100%);
+    color: #4a3000;
   }
+  .m-s::before { background: none; }
   .m-a { background: var(--silver); color: #3a3a3a; }
   .m-b { background: var(--bronze); color: #3a210a; }
   .m-c { background: var(--darkred); color: #f0b8c2; }
@@ -210,6 +228,7 @@
   }
 
   .player {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -217,12 +236,29 @@
     border: 1px solid var(--panel-border);
     border-radius: 8px;
     padding: 7px 12px 7px 7px;
-    transition: border-color 0.15s ease, transform 0.15s ease;
+    overflow: hidden;
+    transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   }
   .player:hover {
     border-color: var(--cyan-dark);
-    transform: translateY(-1px);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 16px rgba(47,216,201,0.22);
+    z-index: 2;
   }
+
+  .player::after {
+    content: '';
+    position: absolute;
+    top: -150%;
+    left: -70%;
+    width: 35%;
+    height: 400%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    transform: rotate(20deg);
+    transition: left 0.45s ease;
+    pointer-events: none;
+  }
+  .player:hover::after { left: 140%; }
 
   .player img {
     width: 32px;
@@ -348,6 +384,37 @@
   .modal-tier-name {
     color: var(--text-muted);
     font-size: 13px;
+  }
+
+  .click-particle {
+    position: fixed;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 200;
+    transform: translate(-50%, -50%);
+    animation: click-burst 0.55s ease-out forwards;
+  }
+  @keyframes click-burst {
+    0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2) rotate(80deg); opacity: 0; }
+  }
+
+  .click-ring {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 199;
+    transform: translate(-50%, -50%);
+    animation: click-ring 0.4s ease-out forwards;
+  }
+  @keyframes click-ring {
+    0% { width: 8px; height: 8px; opacity: 0.65; }
+    100% { width: 64px; height: 64px; opacity: 0; }
   }
 
   @media (max-width: 540px) {
@@ -537,6 +604,38 @@
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
+  });
+
+  const PARTICLE_COLORS = ['var(--orange)', 'var(--cyan)', '#f2c230', '#c9c9c9', '#cd7f32'];
+
+  function spawnClickEffect(x, y) {
+    const ring = document.createElement('div');
+    ring.className = 'click-ring';
+    ring.style.left = x + 'px';
+    ring.style.top = y + 'px';
+    document.body.appendChild(ring);
+    ring.addEventListener('animationend', () => ring.remove());
+
+    const count = 7;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'click-particle';
+      const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.5 - 0.25);
+      const dist = 26 + Math.random() * 22;
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+      p.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+      p.style.background = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+      document.body.appendChild(p);
+      p.addEventListener('animationend', () => p.remove());
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if (document.getElementById('modalOverlay').classList.contains('open')) return;
+    if (e.target.closest('a, button, input, .player')) return;
+    spawnClickEffect(e.clientX, e.clientY);
   });
 
   loadData();
